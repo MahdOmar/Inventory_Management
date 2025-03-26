@@ -17,7 +17,7 @@ class SaleController extends Controller
     public function index()
     {
         $quotes = Quote::where('status','pending')->where('total','>',0)->get();
-        $payments = Payment::all();
+        $payments = Payment::orderBy('created_at','DESC')->get();
         $sales = Sale::all();
         
         return view('Sales.index',compact(['quotes','payments','sales']));

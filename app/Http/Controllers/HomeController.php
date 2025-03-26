@@ -154,7 +154,7 @@ class HomeController extends Controller
 
     elseif(request('type') == "purchase")
     {
-      $purchases = Purchase::whereBetween(DB::raw('DATE(created_at)'), [request('Date-s'), request('Date-e')])->sum('Total');
+      $purchases = Purchase::whereBetween(DB::raw('DATE(Date)'), [request('Date-s'), request('Date-e')])->sum('Total');
 
       return response()->json([
         "results" => $purchases

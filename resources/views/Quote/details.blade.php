@@ -111,7 +111,7 @@
               <div class="form-group">
                 <label for=""> Article <span class="text-danger">*</span></label>                           
 
-                <select name="productId" id="productId" class="form-control show-tick">
+                <select name="productId" id="productId" class="selectpicker form-control show-tick"  data-live-search="true">
                   <option value="">-- Selectionner --</option>
                   @foreach ($products as $product)
                   <option value="{{ $product->id }} {{old('productId') == $product->id ? 'selected' : ''}}">{{ $product->designation }}</option>
@@ -129,13 +129,13 @@
                 <div class="form-group col-lg-6 col-md-6">
                     <label for="">Quantity <span class="text-danger">*</span></label>                           
     
-                    <input type="double" class="form-control" name='quantity' id="quantity" placeholder="Quantity" >
+                    <input type="number"  step="0.01" class="form-control" name='quantity' id="quantity" placeholder="Quantity" >
                 </div>
 
                 <div class="form-group col-lg-6 col-md-6">
                   <label for="">Prix <span class="text-danger">*</span></label>                           
   
-                  <input type="double" class="form-control" name='price' id="price" placeholder="Prix de Vente" >
+                  <input type="number" step="0.01" class="form-control" name='price' id="price" placeholder="Prix de Vente" >
               </div>
 
              

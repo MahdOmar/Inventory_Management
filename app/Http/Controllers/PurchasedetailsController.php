@@ -39,8 +39,36 @@ class PurchasedetailsController extends Controller
             ]);
     
             $data = $request->all();
+            $product = Product::find($request->productId);
             $purchasedetails = Purchasedetails::find($request->purchasedetails_id);
+            $product->quantity -= $purchasedetails->quantity;
+            $product->quantity += $request->quantity;
+            $product->save();
+
             $status = $purchasedetails->fill($data)->save();
+
+        
+
+            $purchases = Purchasedetails::where('productId',$request->productId)->get();
+
+            $quantity =0;
+            $price =0;
+
+
+            foreach ($purchases as $item) {
+               if($item->productId == $product->id )
+               {
+                $quantity += $item->quantity;
+                $price += $item->quantity * $item->price_a;
+
+               }
+            }
+
+            $product->price_a = ceil($price / $quantity)  ;
+
+
+            $product->save();
+
             if($status)
             {
                 return redirect()->route('purchase.details', $request->purchaseId)->with('success','Article a été mis à jour avec succès ');
@@ -67,9 +95,9 @@ class PurchasedetailsController extends Controller
             $data = $request->all();
             
             $product = Product::find($request->productId);
-             $purchase = Purchase::find($request->purchaseId);
-             $purchase->Total += $request->price_a * $request->quantity;
-             $purchase->save();
+            $purchase = Purchase::find($request->purchaseId);
+           //  $purchase->Total += $request->price_a * $request->quantity;
+            // $purchase->save();
             $product->quantity += $request->quantity;
 
             $price = $request->price_a * $request->quantity;
@@ -77,11 +105,11 @@ class PurchasedetailsController extends Controller
 
             $purchases = Purchasedetails::where('productId',$request->productId)->get();
 
-            foreach ($purchases as $purchase) {
-               if($purchase->productId == $product->id)
+            foreach ($purchases as $item) {
+               if($item->productId == $product->id )
                {
-                $quantity += $purchase->quantity;
-                $price += $purchase->quantity * $purchase->price_a;
+                $quantity += $item->quantity;
+                $price += $item->quantity * $item->price_a;
 
                }
             }
@@ -142,11 +170,11 @@ class PurchasedetailsController extends Controller
 
             if(count($purchases) > 0) 
             {
-                foreach ($purchases as $purchase) {
-                    if($purchase->productId == $product->id)
+                foreach ($purchases as $item) {
+                    if($item->productId == $product->id)
                     {
-                     $quantity += $purchase->quantity;
-                     $price += $purchase->quantity * $purchase->price_a;
+                     $quantity += $item->quantity;
+                     $price += $item->quantity * $item->price_a;
      
                     }
                  }

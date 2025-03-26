@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Payment;
 use App\Models\Product;
 use App\Models\Quote;
 use App\Models\Quotedetails;
 use App\Models\Sale;
 use Illuminate\Http\Request;
+
+use function Laravel\Prompts\error;
 
 class QuotedetailsController extends Controller
 {
@@ -48,9 +51,18 @@ class QuotedetailsController extends Controller
             $sale = Sale::where('quoteId',$quote->id)->first();
             $quote->total -= $quotedetails->price * $quotedetails->quantity;
             $quote->total += $request->price * $request->quantity;
+            
            
             if($sale != null)
             {
+                if($quote->client == 'Client de Passage')
+                {
+                    $payment = Payment::where('saleId',$sale->id)->first();
+                    $payment->amount -= $quotedetails->price * $quotedetails->quantity;
+                    $payment->amount += $request->price * $request->quantity;
+                    $payment->save();
+                    
+                }
                 $product = Product::find($quotedetails->productId);
                 $product->quantity += $quotedetails->quantity;
                 $product->save();
@@ -112,6 +124,24 @@ class QuotedetailsController extends Controller
             $quote = Quote::find($request->quoteId);
             $quote->total += $request->quantity * $request->price;
             $quote->save(); 
+            if($quote->client =='Client de Passage'){
+                $sale = Sale::where('quoteId',$quote->id)->first();
+                $sale->total_amount = $quote->total;
+                $sale->save();
+                $payment = Payment::where('saleId',$sale->id)->first();
+                if($payment)
+                {
+                    $payment->amount += $request->quantity * $request->price;
+                }
+                else{
+                    $payment = new Payment();
+                    $payment->saleId = $sale->id;
+                    $payment->amount = $request->quantity * $request->price;
+
+                }
+           
+                $payment->save();
+            }
             
     
             $status = Quotedetails::create($data);
@@ -168,7 +198,17 @@ class QuotedetailsController extends Controller
         $quote = Quote::find($quotedetails->quoteId);
         $quote->total -= $quotedetails->price * $quotedetails->quantity;
         $quote->save();
+        if($quote->client == "Client de Passage")
+        {
+            $sale =Sale::where('quoteId',$quote->id)->first();
+            $sale->total_amount = $quote->total;
+            $payment = Payment::where('saleId',$sale->id)->first();
+            $payment->amount = $quote->total;
+            $sale->save();
+            $payment->save();
+        }
         $status = $quotedetails->delete();
+       
            
         if($status){
             return redirect()->route('quotedetails.index',$quote->id)->with('success','Article supprimé avec Succès');

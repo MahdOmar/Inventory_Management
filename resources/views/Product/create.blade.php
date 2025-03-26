@@ -69,7 +69,7 @@
                     <div class="form-group">
                       <label for=""> Prix_V <span class="text-danger">*</span></label>                           
   
-                      <input type="number" class="form-control" name='price_v' placeholder="Prix Vendre" >
+                      <input type="number" step="0.01" class="form-control" name='price_v' placeholder="Prix Vendre" >
                      </div>
                   </div>
            

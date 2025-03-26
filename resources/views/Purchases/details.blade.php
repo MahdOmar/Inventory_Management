@@ -50,7 +50,7 @@
           <div class="form-group">
             <label for=""> Article <span class="text-danger">*</span></label>                           
 
-            <select name="productId" id="productId" class="form-control show-tick">
+            <select name="productId" id="productId"  class="selectpicker form-control show-tick"  data-live-search="true">
               <option value="">-- Selectionner --</option>
               @foreach ($products as $product)
               <option value="{{ $product->id }} {{old('productId') == $product->id ? 'selected' : ''}}">{{ $product->designation }}</option>
@@ -65,7 +65,7 @@
           <div class="form-group">
             <label for=""> Quantité <span class="text-danger">*</span></label>                           
 
-            <input type="number" class="form-control" id= "quantity"name='quantity' placeholder="Quantité" >
+            <input type="number" class="form-control" id= "quantity"name='quantity' step="0.01" placeholder="Quantité" >
            </div>
         </div>
 
@@ -75,7 +75,7 @@
           <div class="form-group">
             <label for=""> Prix_A <span class="text-danger">*</span></label>                           
 
-            <input type="number" class="form-control" id="price_a" name='price_a' placeholder="Prix Achat" >
+            <input type="number" step="0.01" class="form-control" id="price_a" name='price_a' placeholder="Prix Achat" >
            </div>
         </div>
  
@@ -185,13 +185,19 @@
 
 @endsection
 
+
+
 <script src="{{ asset("js/jquery.min.js") }}"></script>
     <script src="{{ asset("js/popper.js") }}"></script>
     <script src="{{ asset("js/bootstrap.min.js") }}"></script>
 
 
 <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+
 <script>
+
+  
 
 function getDetail(id)
     {

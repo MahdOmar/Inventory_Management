@@ -11,8 +11,14 @@
 
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css" class="rel">
 		<link rel="stylesheet" href="{{ asset("css/style.css") }}">
-    <link rel="stylesheet" href="{{asset('css/owl.carousel.min.css')}}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta2/dist/css/bootstrap-select.min.css">
 
+<style>
+  .btn-light{
+    background-color: white;
+    border: solid 1px lightgray;
+  }
+</style>
   </head>
   <body>
 		
@@ -116,9 +122,7 @@
                                     @csrf
                                 </form>
 
-                                <a href="{{ route('structure.changelayout') }}" class="dropdown-item"  >
-                                 Changer Mot de Pass
-                             </a>
+                                
                             </div>
                         </li>
                     @endguest
@@ -146,6 +150,7 @@
 
 
 		</div>
+   
     <script src="{{ asset("js/jquery.min.js") }}"></script>
     <script src="{{ asset("js/popper.js") }}"></script>
     <script src="{{ asset("js/bootstrap.min.js") }}"></script>
@@ -155,10 +160,11 @@
 
    
     <script src="{{ asset("js/main.js") }}"></script>
-    <script src="/vendor/laravel-filemanager/js/stand-alone-button.js"></script>
 
     <script src="{{ asset("js/jquery.dataTables.min.js") }}"> </script>
-    <script src="{{asset('js/owl.carousel.min.js')}}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta2/dist/js/bootstrap-select.min.js"></script>
 
     <script>
     
@@ -173,7 +179,16 @@
         $('.dataTables_length').addClass('bs-select');
     });
    
+    
+   $('.selectpicker').selectpicker();
+
+
+
+
+
     </script>
+ 
+
    
   </body>
 </html>

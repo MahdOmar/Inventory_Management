@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use App\Models\Quote;
 use App\Models\Quotedetails;
+use App\Models\Sale;
 use Illuminate\Http\Request;
 use PhpParser\Node\Expr\Cast\String_;
 
@@ -16,7 +17,7 @@ class QuoteController extends Controller
     public function index()
     {
         $products = Product::all();
-        $quotes = Quote::all();
+        $quotes = Quote::orderBy('created_at','DESC')->get();
         return view(('Quote.index'),compact(['products','quotes']));
     }
 
@@ -129,6 +130,29 @@ class QuoteController extends Controller
     {
         //
     }
+
+    public function passingCustomer()
+    {
+        $quote = new Quote();
+        $quote->client = 'Client de Passage';
+        $quote->phone = '-';
+        $quote->total = 0;
+        $quote->status  = 'invoice';
+        $quote->save();
+        $sale =new Sale();
+        $sale->quoteId = $quote->id;
+        $sale->total_amount = $quote->total;
+        $sale->status = 'paid';
+        $sale->save();
+
+        return redirect()->route('quotedetails.index',$quote->id);
+
+    }
+
+
+
+
+
 
     /**
      * Remove the specified resource from storage.

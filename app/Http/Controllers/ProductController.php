@@ -49,7 +49,7 @@ class ProductController extends Controller
         $status = Product::create($data);
         if($status)
         {
-            return redirect()->route('products.index')->with('success','Achat créer avec succès ');
+            return redirect()->route('products.create')->with('success','Achat créer avec succès ');
 
         }
         else
