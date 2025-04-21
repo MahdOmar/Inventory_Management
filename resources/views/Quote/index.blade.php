@@ -57,7 +57,7 @@
     </div>
 
     <div class="col-lg-3 col-md-3 m-2 mt-4 ">
-      <a href="{{ route('quote.customer') }}" id="btn" class=" btn btn-success mt-2  "> Pour un Client de Passage</a>
+      <a href="{{ route('quote.customer') }}" id="btn" class=" btn btn-success mt-2  "> Client de Passage</a>
     
   </div>
   
