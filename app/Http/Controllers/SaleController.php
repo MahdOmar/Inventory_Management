@@ -238,7 +238,7 @@ class SaleController extends Controller
 
            
         if($status){
-            return redirect()->route('sales.index')->with('success','Sale supprimé avec Succès');
+            return redirect()->route('sales.index')->with('success','Vente supprimé avec Succès');
         }
         else{
             return back()->with('error','Something went wrong');

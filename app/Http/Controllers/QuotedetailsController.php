@@ -142,6 +142,29 @@ class QuotedetailsController extends Controller
            
                 $payment->save();
             }
+
+            $sale = Sale::where('quoteId',$quote->id)->first();
+            if($sale)
+            {
+                $product->quantity -= $request->quantity;
+                $product->save();
+
+                if($sale->status == "paid" && ($sale->total_amount <  $quote->total))
+                {
+                    $sale->status ="unpaid";
+                    $quote->status = "pending";
+                    $sale->save();
+
+                }
+                elseif($sale->status == "unpaid" && ($sale->total_amount >=  $quote->total))
+                {
+                    $sale->status ="paid";
+                    $quote->status = "invoice";
+                    $sale->save();
+                }
+
+
+            }
             
     
             $status = Quotedetails::create($data);
@@ -198,15 +221,42 @@ class QuotedetailsController extends Controller
         $quote = Quote::find($quotedetails->quoteId);
         $quote->total -= $quotedetails->price * $quotedetails->quantity;
         $quote->save();
+        $sale =Sale::where('quoteId',$quote->id)->first();
         if($quote->client == "Client de Passage")
         {
-            $sale =Sale::where('quoteId',$quote->id)->first();
             $sale->total_amount = $quote->total;
             $payment = Payment::where('saleId',$sale->id)->first();
             $payment->amount = $quote->total;
             $sale->save();
             $payment->save();
         }
+        // Return quantity back to stock 
+        if($sale)
+        {
+            $product = Product::find($quotedetails->productId);
+            $product->quantity += $quotedetails->quantity;
+            $product->save();
+
+            if($sale->status == "paid" && ($sale->total_amount <  $quote->total))
+            {
+                $sale->status ="unpaid";
+                $quote->status = "pending";
+                $sale->save();
+
+            }
+            elseif($sale->status == "unpaid" && ($sale->total_amount >=  $quote->total))
+            {
+                $sale->status ="paid";
+                $quote->status = "invoice";
+                $sale->save();
+            }
+
+
+
+        }
+      
+
+
         $status = $quotedetails->delete();
        
            
