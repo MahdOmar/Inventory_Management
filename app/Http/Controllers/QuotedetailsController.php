@@ -51,10 +51,52 @@ class QuotedetailsController extends Controller
             $sale = Sale::where('quoteId',$quote->id)->first();
             $quote->total -= $quotedetails->price * $quotedetails->quantity;
             $quote->total += $request->price * $request->quantity;
+
+            
             
            
             if($sale != null)
             {
+                /* Return quantity back to stock */
+                
+                $product = Product::find($quotedetails->productId);
+                $product->quantity += $quotedetails->quantity;
+                $product->save();
+
+                /* End Return quantity back to stock */
+
+                $product_new = Product::find($request->productId);
+
+                /* Check if quantity Exists */
+                if($request->quantity > $product->quantity)
+                {
+                    return back()->with('error','Quantité demandé non disponible');
+                }
+                /* End Check if quantity Exists */
+
+                $product_new ->quantity -= $request->quantity;
+                $product_new->save();
+
+                /**  Check for sale status and update according to the situation */
+                if($sale->status == "paid" && ($sale->total_amount <  $quote->total))
+                {
+                    $sale->status ="unpaid";
+                    $quote->status = "pending";
+                    $sale->save();
+                    $quote->save();
+
+                }
+                elseif($sale->status == "unpaid" && ($sale->total_amount >=  $quote->total))
+                {
+                    $sale->status ="paid";
+                    $quote->status = "invoice";
+                    $sale->save();
+                    $quote->save();
+
+                }
+                /**  End Check for sale status and update according to the situation */
+
+                /**********  Passing Customer  ************/
                 if($quote->client == 'Client de Passage')
                 {
                     $payment = Payment::where('saleId',$sale->id)->first();
@@ -63,25 +105,8 @@ class QuotedetailsController extends Controller
                     $payment->save();
                     
                 }
-                $product = Product::find($quotedetails->productId);
-                $product->quantity += $quotedetails->quantity;
-                $product->save();
-                $product_new = Product::find($request->productId);
-                $product_new ->quantity -= $request->quantity;
-                $product_new->save();
-                if($sale->status == "paid" && ($sale->total_amount <  $quote->total))
-                {
-                    $sale->status ="unpaid";
-                    $quote->status = "pending";
-                    $sale->save();
 
-                }
-                elseif($sale->status == "unpaid" && ($sale->total_amount >=  $quote->total))
-                {
-                    $sale->status ="paid";
-                    $quote->status = "invoice";
-                    $sale->save();
-                }
+                /* End Passing Customer */
             }
             $quote->save();
 
@@ -154,6 +179,7 @@ class QuotedetailsController extends Controller
                     $sale->status ="unpaid";
                     $quote->status = "pending";
                     $sale->save();
+                    $quote->save();
 
                 }
                 elseif($sale->status == "unpaid" && ($sale->total_amount >=  $quote->total))
@@ -161,6 +187,7 @@ class QuotedetailsController extends Controller
                     $sale->status ="paid";
                     $quote->status = "invoice";
                     $sale->save();
+                    $quote->save();
                 }
 
 
