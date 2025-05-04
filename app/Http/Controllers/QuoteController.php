@@ -160,6 +160,11 @@ class QuoteController extends Controller
     public function destroy(String $id)
     {
         $quote = Quote::find($id);
+        $sale = Sale::where('quoteId',$quote->id)->first();
+        if($sale)
+        {
+            return back()->with('error','Désolé, Ce Devis est Déja Vendu, Veuillez supprimer ses ventes d\'aboard');
+        }
         $status = $quote->delete();
            
         if($status){

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use App\Models\Quotedetails;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
@@ -111,6 +112,11 @@ class ProductController extends Controller
     public function destroy(string $id)
     {
         $product = Product::find($id);
+        $quotedetails = Quotedetails::where('productId',$product->id)->first();
+        if($quotedetails)
+        {
+            return back()->with('error','Désolé, Ce produit est déja dans un Devis, Veuillez supprimer le Devis d\'abord');
+        }
         $status = $product->delete();
            
         if($status){
